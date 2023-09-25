@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Text-to-Speech Program</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      #wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 80%;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      label {
+        margin-bottom: 10px;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+
+      button:hover {
+        background-color: #3E8E41;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>Text-to-Speech Program</h1>
+      <label for="text">Enter text (up to 100 characters):</label>
+      <input type="text" id="text" maxlength="100">
+      <label for="voice">Select a voice:</label>
+      <select id="voice"></select>
+      <button id="speak">Speak</button>
+    </div>
+    <script>
+      // Get references to the DOM elements
+      const textInput = document.getElementById("text");
+      const voiceSelect = document.getElementById("voice");
+      const speakButton = document.getElementById("speak");
+
+      // Populate the voice selection dropdown with available voices
+      function populateVoices() {
+        const voices = speechSynthesis.getVoices();
+        voices.forEach(voice => {
+          const option = document.createElement("option");
+          option.value = voice.name;
+          option.textContent = voice.name + " (" + voice.lang + ")";
+          voiceSelect.appendChild(option);
+        });
+      }
+
+      // Wait for the voices to be loaded before populating the dropdown
+      speechSynthesis.onvoiceschanged = () => {
+        populateVoices();
+      };
+
+      // Speak the entered text using the selected voice
+      function speak() {
+        const utterance = new SpeechSynthesisUtterance(textInput.value);
+        const selectedVoice = voiceSelect.value;
+        const voices = speechSynthesis.getVoices();
+        const voice = voices.find(voice => voice.name === selectedVoice);
+        utterance.voice = voice;
+        speechSynthesis.speak(utterance);
+      }
+
+      // Add a click event listener to the speak button
+      speakButton.addEventListener("click", speak);
+    </script>
+  </body>
+</html>
